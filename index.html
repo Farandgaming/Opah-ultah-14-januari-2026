@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>ULTAH OPAH 👑🎉</title>
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(120deg, #f093fb, #f5576c);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Poppins, sans-serif;
+  overflow: hidden;
+}
+
+.box {
+  background: white;
+  padding: 35px 40px;
+  border-radius: 25px;
+  text-align: center;
+  width: 420px;
+  box-shadow: 0 25px 60px rgba(0,0,0,.35);
+  animation: masuk 1s ease;
+  z-index: 2;
+}
+
+@keyframes masuk {
+  from { transform: scale(0) rotate(-10deg); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+h1 {
+  color: #ff4081;
+  animation: glow 1.5s infinite alternate;
+}
+
+@keyframes glow {
+  from { text-shadow: 0 0 10px #ff80ab; }
+  to { text-shadow: 0 0 30px #ff1744; }
+}
+
+.progress {
+  font-size: 14px;
+  color: #777;
+}
+
+.question {
+  font-size: 20px;
+  margin: 20px 0;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 15px;
+  font-size: 16px;
+  cursor: pointer;
+  color: white;
+  background: linear-gradient(135deg,#ff9800,#ff5722);
+  transition: .3s;
+}
+
+button:hover {
+  transform: scale(1.08);
+}
+
+.music-btn {
+  background: #3f51b5;
+}
+
+.shake {
+  animation: shake .4s;
+}
+
+@keyframes shake {
+  0% {transform:translateX(0)}
+  25% {transform:translateX(-8px)}
+  50% {transform:translateX(8px)}
+  75% {transform:translateX(-8px)}
+  100% {transform:translateX(0)}
+}
+
+.confetti {
+  position: fixed;
+  top: -10px;
+  width: 10px;
+  height: 10px;
+  animation: jatuh linear infinite;
+}
+
+@keyframes jatuh {
+  to { transform: translateY(110vh) rotate(720deg); }
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🎶 LAGU DARI KAMU -->
+<audio id="lagu" loop>
+  <source src="lagu.mp3" type="audio/mpeg">
+</audio>
+
+<div class="box" id="app"></div>
+
+<script>
+let level = 0;
+const lagu = document.getElementById("lagu");
+
+const soal = [
+  {
+    q: "Siapa Opah paling hebat?",
+    a: ["Opah TV", "Opah ini 😎", "Opah tetangga"],
+    b: 1
+  },
+  {
+    q: "Hari ini hari apa?",
+    a: ["Hari biasa", "Hari ultah Opah 🎂", "Hari galau"],
+    b: 1
+  },
+  {
+    q: "Doa terbaik buat Opah?",
+    a: ["Sehat & bahagia 🤍", "Cepet capek", "Kurang tidur"],
+    b: 0
+  }
+];
+
+function render() {
+  const app = document.getElementById("app");
+
+  if (level < soal.length) {
+    app.innerHTML = `
+      <h1>🎉 LEVEL ${level+1} 🎉</h1>
+      <div class="progress">${level+1}/${soal.length}</div>
+      <div class="question">${soal[level].q}</div>
+      ${soal[level].a.map((x,i)=>`
+        <button onclick="jawab(${i})">${x}</button>
+      `).join("")}
+      <button class="music-btn" onclick="toggleMusic()">🎶 Play / Pause Lagu</button>
+    `;
+  } else {
+    tamat();
+  }
+}
+
+function jawab(p) {
+  lagu.play().catch(()=>{}); // supaya lagu nyala di browser
+
+  if (p === soal[level].b) {
+    level++;
+    setTimeout(render, 300);
+  } else {
+    const app = document.getElementById("app");
+    app.classList.remove("shake");
+    void app.offsetWidth;
+    app.classList.add("shake");
+    alert("❌ Salah 😆 coba lagi!");
+  }
+}
+
+function toggleMusic() {
+  lagu.paused ? lagu.play() : lagu.pause();
+}
+
+function tamat() {
+  document.getElementById("app").innerHTML = `
+    <h1>👑 LEVEL DEWA 👑</h1>
+    <p>
+      🎊 SELAMAT ULANG TAHUN OPAH 🎊<br><br>
+      Semoga selalu sehat,<br>
+      panjang umur,<br>
+      dan bahagia selalu 🤍
+    </p>
+    <div style="font-size:45px">🎂🎁🎈🎉</div>
+    <button class="music-btn" onclick="toggleMusic()">🎶 Play / Pause Lagu</button>
+  `;
+  confetti();
+}
+
+function confetti() {
+  const warna = ["#ff1744","#ffeb3b","#00e5ff","#76ff03","#d500f9"];
+  for (let i=0;i<180;i++){
+    const c=document.createElement("div");
+    c.className="confetti";
+    c.style.left=Math.random()*100+"vw";
+    c.style.background=warna[Math.floor(Math.random()*warna.length)];
+    c.style.animationDuration=Math.random()*3+2+"s";
+    document.body.appendChild(c);
+  }
+}
+
+render();
+</script>
+
+</body>
+</html>
